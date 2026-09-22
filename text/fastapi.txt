@@ -23,4 +23,11 @@ main.py => app = FastAPI()
 다중 라우팅 => APIRouter()
  /users/  CRUD
  /items/  CRUD
- /
+
+클라이언트 - 서버 기반의 프로그램 구현
+
+Access to XMLHttpRequest at 'http://127.0.0.1:8000/todos/' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+CORS policy : 동일 출처 정책 => 브라우저가 차단
+
+차단해제 : 서버 프로그램에서 CORS 설정
