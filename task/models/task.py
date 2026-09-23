@@ -1,6 +1,9 @@
 from pydantic import BaseModel
 
-class Task(BaseModel):
-    id: int
+class TaskInsert(BaseModel):
     text: str
     done: bool
+
+
+class Task(TaskInsert):
+    id: int

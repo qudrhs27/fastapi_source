@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from routers.task import task_router
 
 app = FastAPI()
 
@@ -13,3 +14,4 @@ app.add_middleware(
 )
 
 # router 설정 - 개별 라우터 생성 후 포함
+app.include_router(task_router, prefix="/tasks")
