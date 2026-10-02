@@ -1,6 +1,8 @@
 # CRUD 작업
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
+from sqlalchemy import select
 from repository.models.board import Board
+from repository.models.comment import Comment
 from schemas.board import BoardCreate, BoardUpdate
 from exceptions.board import BoardNotFoundException
 import math
@@ -32,13 +34,33 @@ def update(db: Session, data: BoardUpdate, id: int):
 
 
 # id 와 일치하는 board 하나 조회
+# def select_one(db: Session, id: int):
+#     board = db.get(Board, id)
+
+#     if board is None:
+#         BoardNotFoundException
+
+#     return board
+
+# id 와 일치하는 board 하나 조회 + 댓글 함께
 def select_one(db: Session, id: int):
-    board = db.get(Board, id)
+
+    stmt = select(Board).options(
+        selectinload(Board.user), # 게시글 작성자 정보
+        selectinload(Board.comments).selectinload(Comment.user), # 댓글 + 댓글작성자
+        ).where(Board.id == id)
+
+    board = db.scalar(stmt)
 
     if board is None:
         BoardNotFoundException
 
     return board
+
+
+def recentPosts(db: Session):
+    # 최신게시물 4개 추출
+    return db.query(Board).order_by(Board.id.desc()).limit(4).all()
 
 
 # page, size 이용하는 전체조회

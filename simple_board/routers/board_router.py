@@ -1,12 +1,19 @@
 from fastapi import APIRouter, HTTPException, status
 from schemas.board import BoardCreate, BoardUpdate, BoardPageResponse, BoardResponse
-from services.board import create, update, select_one, select_all, delete
+from services.board import create, update, select_one, select_all, delete, recentPosts
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from repository.database import get_db
 from exceptions.board import BoardNotFoundException
 
 board_router = APIRouter(tags=["Boards"])
+
+
+# 최신글 조회 + GET : http://localhost:8000/boards/recents
+@board_router.get("/recents", response_model=list[BoardResponse])
+async def get_boards_recents(db: Session = Depends(get_db)):
+    return recentPosts(db=db)
+
 
 # 전체 조회 + GET : http://localhost:8000/boards
 @board_router.get("", response_model=BoardPageResponse)
@@ -22,7 +29,7 @@ async def get_board(id: int, db: Session = Depends(get_db)):
     try:
         board = select_one(db=db, id=id)
     except BoardNotFoundException:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND ,detail="찾는 board가 없습니다.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="찾는 board가 없습니다.")
     
     return board
 

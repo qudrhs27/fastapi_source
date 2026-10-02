@@ -18,6 +18,9 @@ class User(Base):
     password: Mapped[str] = mapped_column(String(100), nullable=False)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+
     # user.boards.
     boards: Mapped[list["Board"]] = relationship(back_populates="user")
+    # user.comments
+    comments: Mapped[list["Comment"]] = relationship(back_populates="user")
     
