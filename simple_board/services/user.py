@@ -4,6 +4,10 @@ from schemas.user import UserCreate, UserLogin, NameChange, EmailChange, Passwor
 from repository.models.user import User
 from exceptions.user import UserAlreadyExistsException, UserNotFoundException, InvalidPasswordException, SamePasswordException
 from core.security import hash_password, verify_password
+from utils.security import create_access_token
+from schemas.user import Token
+
+DUMMY_HASH = hash_password("dummypassword")
 
 # CRUD 작업
 
@@ -67,13 +71,17 @@ def authenticate(db: Session, data: UserLogin):
 
     # 회원가입 정보가 없는 경우
     if user is None:
+        # Timing attack 방지
+        verify_password(data.password, DUMMY_HASH)
         raise UserNotFoundException
 
     # 비밀번호 검증 틀린 경우
     if not verify_password(data.password, user.password):
         raise InvalidPasswordException
 
-    return user
+    access_token = create_access_token(data={"sub": str(user.user_id)})
+
+    return Token(access_token=access_token)
 
 
 # 회원가입

@@ -6,21 +6,27 @@ from repository.models.comment import Comment
 from schemas.board import BoardCreate, BoardUpdate
 from exceptions.board import BoardNotFoundException
 import math
+from repository.models.user import User
+from exceptions.user import UserCredentialsException
 
-def create(db: Session, data: BoardCreate):
+def create(db: Session, data: BoardCreate, current_user: User):
     # 스키마 => 테이블 연결 모델
-    board = Board(title=data.title, contents=data.contents, user_id=data.user_id)
+    board = Board(title=data.title, contents=data.contents, user_id=current_user.user_id)
     db.add(board)
     db.commit()
     db.refresh(board)
     return board
 
-def update(db: Session, data: BoardUpdate, id: int):
+def update(db: Session, data: BoardUpdate, id: int, current_user: User):
     # 수정할 대상 찾기
     board = db.get(Board, id)
 
     if board is None:
         BoardNotFoundException
+
+    # 로그인 사용자 == 작성자 이냐?
+    if board.user_id != current_user.user_id:
+        raise UserCredentialsException
 
     # title 만 수정 or contents 만 수정 or title,contents 둘 다 수정
     if data.title is not None:
@@ -84,12 +90,16 @@ def select_all(db: Session, page: int, size: int):
 
 
 # 삭제
-def delete(db: Session, id: int):
+def delete(db: Session, id: int, current_user: User):
     # 삭제할 대상 찾기
     board = db.get(Board, id)
 
     if board is None:
         BoardNotFoundException
+
+    # 로그인 사용자 == 작성자 이냐?
+    if board.user_id != current_user.user_id:
+        raise UserCredentialsException
 
     db.delete(board)
     db.commit()

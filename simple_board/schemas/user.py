@@ -51,3 +51,9 @@ class UserResponse(BaseModel):
     user_id: int
     email: EmailStr
     name: str
+
+
+# Token 타입
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"

@@ -38,3 +38,8 @@ CORS policy : 동일 출처 정책 => 브라우저가 차단
 
 uv add "pwdlib[bcrypt]"
 uv add "pwdlib[argon2]"
+
+JWT 생성 라이브러리 설치
+uv add pyjwt
+
+openssl rand -hex 32
