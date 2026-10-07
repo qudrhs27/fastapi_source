@@ -43,3 +43,13 @@ JWT 생성 라이브러리 설치
 uv add pyjwt
 
 openssl rand -hex 32
+
+
+uv add alembic
+
+alembic : 데이터베이스 변경 이력 관리
+현재프로젝트에 alembic 적용
+uv run alembic init alembic
+
+변경된 부분을 기록
+uv run alembic revision --autogenerate -m "add views"

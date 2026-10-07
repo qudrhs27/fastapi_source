@@ -44,6 +44,8 @@ class BoardPageResponse(BaseModel):
     page: int
     size: int
     total_pages: int
+    criteria: str
+    keyword: str
 
 class Comment(BaseModel):
     postId: int

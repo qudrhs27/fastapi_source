@@ -6,6 +6,8 @@ from fastapi import Depends
 from repository.database import get_db
 from exceptions.user import UserAlreadyExistsException, UserNotFoundException, InvalidPasswordException, SamePasswordException
 from schemas.user import Token
+from repository.models.user import User
+from core.dependencies import get_current_user
 
 auth_router = APIRouter(tags=["Users"])
 
@@ -14,6 +16,12 @@ auth_router = APIRouter(tags=["Users"])
 # 비밀번호수정 /auth/1/password + patch
 # 이름수정 /auth/1/name + patch
 # 이메일수정 /auth/1/email + patch
+
+
+@auth_router.get("/me", response_model=UserResponse)
+async def read_me(current_user: User = Depends(get_current_user)) -> UserResponse:
+    return current_user
+
 
 @auth_router.post(path="", response_model=dict)
 async def post_signup(data: UserCreate, db: Session = Depends(get_db)) -> dict:

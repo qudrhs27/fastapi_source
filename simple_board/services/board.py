@@ -69,10 +69,18 @@ def recentPosts(db: Session):
     return db.query(Board).order_by(Board.id.desc()).limit(4).all()
 
 
-# page, size 이용하는 전체조회
-def select_all(db: Session, page: int, size: int):
+# page, size 이용하는 전체조회 + 검색
+def select_all(db: Session, page: int, size: int, criteria: str, keyword: str):
     # select * from boards order by id desc limit 1,10
     query =  db.query(Board)
+
+    if keyword:
+        if criteria == "tc":
+            query = query.filter(Board.title.contains(keyword) | Board.contents.contains(keyword))
+        elif criteria == "t":
+            query = query.filter(Board.title.contains(keyword))
+        elif criteria == "w":
+            query = query.join(Board.user).filter(User.name.contains(keyword))
 
     # 전체 개수(페이지 수 알아내기 위해서)
     total = query.count()
@@ -86,6 +94,8 @@ def select_all(db: Session, page: int, size: int):
         "page": page,
         "size": size,
         "total_pages": total_pages,
+        "criteria": criteria,
+        "keyword": keyword,
     }
 
 

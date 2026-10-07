@@ -65,6 +65,15 @@ def update_password(db: Session, data: PasswordChange, user_id: int):
     return user
 
 
+# 현재 로그인된 사용자를 반환
+def get_user(db: Session, user_id: int) -> User:
+    user = db.get(User, user_id)
+    if user is None:
+        raise UserNotFoundException
+
+    return user
+
+
 # 로그인
 def authenticate(db: Session, data: UserLogin):
     user = db.scalar(select(User).where(User.email == data.email))
