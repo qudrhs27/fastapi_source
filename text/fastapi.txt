@@ -53,3 +53,31 @@ uv run alembic init alembic
 
 변경된 부분을 기록
 uv run alembic revision --autogenerate -m "add views"
+
+명령어
+초기화 : alembic init 폴더명 => 지정한폴더 + *.ini
+마이그레이션 파일 생성 : alembic revision --autogenerate -m 메세지
+최신 db 상태로 업그레이드 : alembic upgrade head
+이전 버전으로 롤백 : alembic downgrade -1
+
+
+백엔드
+1) 가상환경 구축
+    uv init
+2) 필요한 라이브러리 설치
+    uv add "fastapi[standard]" => .venv 폴더 생성
+    uv add "pwdlib[argon2]" => 비밀번호 암호화
+    uv add oracledb => oracle 연동
+    uv add sqlalchemy==2.0.54 => ORM
+    uv add pyjwt => jwt 토큰
+    uv add alembic => 테이블 관리
+--------------------------------------------------------
+프론트엔드
+1) 프로젝트 vite 구조로 생성
+    npm create vite@latest 프로젝트명
+
+2) 디자인
+    css 직접 작성
+    tailwindcss
+
+3) 폴더 구조

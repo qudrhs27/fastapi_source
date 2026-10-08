@@ -1,13 +1,31 @@
 # CRUD 작업
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select
-from repository.models.board import Board
+from repository.models.board import Board, Board_Views
 from repository.models.comment import Comment
 from schemas.board import BoardCreate, BoardUpdate
 from exceptions.board import BoardNotFoundException
 import math
 from repository.models.user import User
 from exceptions.user import UserCredentialsException
+
+
+# 조회수 증가
+def update_views(db: Session, board: Board, current_user: User):
+    # Boards 테이블의 update views + 1
+    # board_views 테이블 insert () => 동일한 값이 존재하는지 확인
+
+    stmt = select(Board_Views).where(Board_Views.board_id == board.id, Board_Views.user_id == current_user.user_id)
+    view = db.scalar(stmt)
+
+    if view is None:
+        board.views += 1
+
+        board_view = Board_Views(board_id=board.id, user_id=current_user.user_id)
+        db.add(board_view)
+        db.commit()
+        
+
 
 def create(db: Session, data: BoardCreate, current_user: User):
     # 스키마 => 테이블 연결 모델
